@@ -1,42 +1,74 @@
-var Hook = {
+var Hook = 
+{
 	hooks: {},
-	settings: {"testmode":true,"version":"Beta20","ReleaseNotes":"Juan, for now."},
-	register: function ( opts ) {
-	if (typeof opts != undefined){
-		//set default options
-		var name = (typeof opts["callname"] !== "undefined" ?  opts["callname"]  : false)
-		var order = (typeof opts["order"] !== "undefined" ? opts["order"] : 0);
-		var asynch = (typeof opts["asynch"] !== "undefined" ? opts["asynch"] : false);
-		var callback = (typeof opts["callback"] !== "undefined" ? opts["callback"] : false);
-		var status = (typeof opts["status"] !== "undefined" ? opts["status"] : "active");
-		var code = (typeof opts["code"] !== "undefined" ? opts["code"] : name+order);
+	settings: {"testmode":true,"version":"Beta40","ReleaseNotes":"Juan, for now."},
+	register: function ( opts )
+	{
+		if (typeof opts != undefined)
+		{
+			//set default options
+			var name = (typeof opts["callname"] !== "undefined" ?  opts["callname"]  : false)
+			var order = (typeof opts["order"] !== "undefined" ? opts["order"] : 0);
+			var asynch = (typeof opts["asynch"] !== "undefined" ? opts["asynch"] : false);
+			var callback = (typeof opts["callback"] !== "undefined" ? opts["callback"] : false);
+			var status = (typeof opts["status"] !== "undefined" ? opts["status"] : "active");
+			var code = (typeof opts["code"] !== "undefined" ? opts["code"] : name+order);
 		
-		//check for missing vars
-		if ( (name == false) || (callback == false) )  {
-			return false;
-			Hook.log("Hook registration failed.  Missing NAME or CALLBACK.");
-		} else { 
-			//All good, lets register the hook
-			if( 'undefined' == typeof( Hook.hooks[name] ) )	Hook.hooks[name] = [];
-			opts = {"code":code, "order" : order, "status":status, "asynch":asynch, "callback" : callback }
-			Hook.hooks[name].push( opts );
-			//Hook.reorder(name);
-			return true;
-		}
-	} else return false;
+			//check for missing vars
+			if ( (name == false) || (callback == false) )
+			{
+				return false;
+				Hook.log("Hook registration failed.  Missing NAME or CALLBACK.");
+			} else 
+			{ 
+				//All good, lets register the hook
+				if( 'undefined' == typeof( Hook.hooks[name] ) )	Hook.hooks[name] = [];
+				opts = {"code":code, "order" : order, "status":status, "asynch":asynch, "callback" : callback }
+				Hook.hooks[name].push( opts );
+				//Hook.reorder(name);
+				return true;
+			}
+		} else return false;
 
-  },
+	},
  
-	call: function ( name, args ) {
-		if( 'undefined' != typeof( Hook.hooks[name] ) )
-		  for( i = 0; i < Hook.hooks[name].length; ++i )
-			if( true != Hook.hooks[name][i].callback( args ) ) { break; }
+	call: function ( name, args )
+	{
+		if( typeof( Hook.hooks[name] ) != 'undefined' )
+		{
+			for( i = 0; i < Hook.hooks[name].length; ++i )
+		  	{
+				if( Hook.hooks[name][i].callback )
+				{
+					Hook.hooks[name][i].callback( args ) 
+
+				}
+			}
+		}
 	},
 	clearAll:function(name){
-		Hook.hooks[name] = [];
-		return true;
+		//check if targeting specific callback with CODE.
+		//Structure: [name].[code] or [name]
+		if (typeof name != "undefined" )
+		{
+			var code = name.indexOf(".");
+			if ( code == -1 ) 
+			{
+				//clear all hooks with provided name
+				Hook.hooks[name] = [];
+				return true;
+			}else if ( code != -1 ) 
+			{
+				//clear only a specific hook within a name
+				code = name.substring(code,name.length);
+				for ( h in Hook.hooks[name] )
+					var hook = Hook.hooks[name][h]
+					if ( hook.code == code )
+						Hook.hooks[name].splice(h,h);
+				return true;
 	
-	
+			} else return false;
+		} else return false;
 	},	
 	reorder: function (obj){
 		var indexes = [];
@@ -66,13 +98,14 @@ var Hook = {
 
   
 	},
-	msg: function ( m ) {
-		alert(m);
-  
-	},
 	log: function ( l ) {
+		//error handling
 		if (typeof(l) == "undefined") var l = "Log called but missing message!";
-		if (Hook.settings["testmode"] == true)	debug.log( "Yar! " + l);
+		//check for testmode
+		if ( typeof Hook.settings == "undefined" ) var testmode = false
+			else var testmode = Hook.settings["testmode"];
+		//if console exists and testmode is active
+		if ( ( testmode == true ) && ( console.log ) ) console.log( "Yar! " + l);
   
 	},
 	WhoAmI: function ( ) {
