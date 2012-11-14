@@ -4,7 +4,7 @@ var Hook =
 	settings: {"testmode":true,"version":"Beta40","ReleaseNotes":"Juan, for now."},
 	register: function ( opts )
 	{
-		if (typeof opts != undefined)
+		if (typeof opts != "undefined")
 		{
 			//set default options
 			var name = (typeof opts["callname"] !== "undefined" ?  opts["callname"]  : false)
@@ -17,8 +17,8 @@ var Hook =
 			//check for missing vars
 			if ( (name == false) || (callback == false) )
 			{
-				return false;
 				Hook.log("Hook registration failed.  Missing NAME or CALLBACK.");
+				return false;
 			} else 
 			{ 
 				//All good, lets register the hook
@@ -51,6 +51,7 @@ var Hook =
 		//Structure: [name].[code] or [name]
 		if (typeof name != "undefined" )
 		{
+			var e, hook;
 			var code = name.indexOf(".");
 			if ( code == -1 ) 
 			{
@@ -61,10 +62,20 @@ var Hook =
 			{
 				//clear only a specific hook within a name
 				code = name.substring(code,name.length);
+				name = name.replace(code, '');
+				code = code.replace('.','');
 				for ( h in Hook.hooks[name] )
-					var hook = Hook.hooks[name][h]
+				{
+					hook = Hook.hooks[name];
+					e = h;
+					hook = hook[h];
+
 					if ( hook.code == code )
-						Hook.hooks[name].splice(h,h);
+					{
+						if ( e == 0 ) e = 1;
+						Hook.hooks[name].splice( h, e );
+					}
+				}
 				return true;
 	
 			} else return false;
@@ -78,7 +89,7 @@ var Hook =
 			//extract order for the sort method
 			var i = {"order":o.order,"obj":v[k]};
 			indexes.push(i);
-			debug.log(o);
+			Hooks.log(o);
 		}
 		
 		//sorts the temp array
@@ -121,84 +132,3 @@ var Hook =
 		Hook.call( n, a )
 	}
 }
-
-/*
-
-VERSION ALPHA
-Modified a version of hooks to use a more object oriented approach... ish. 
-Added a settings object, log, msg, WhoAmI, and shortcut ojects.
-Very basic, just proof of concept.
-
-VERSION BETA
-Added reordering function.
-Cleaned up code a bit.
-Tested in CHA.
-Released as Beta candidate.
-Known issues: Callbacks are not fired in specified order.
-
-
-
-
-
-
-//I need this to happen everytime CovCalcBuild is triggered
-Hook.register(
-  'CovCalcBuild',
-  function () {
-    alert( 'Bye!' );
-    return true;
-  }
-);
-
-
-//Trigger CovCalcBuild callbacks
-Hook.call('CovCalcBuild');
-
-
-//hook object structure
-
-{
-    "hooks": [
-        {
-            "CovCalcBuild": [
-                {
-                    "order": "1",
-                    "status": "active",
-                    "asynch": false,
-                    "callback": "function(){ return true;}"
-                },
-                {
-					"code":"coverageL"
-                    "order": "1",
-                    "status": "disabled",
-                    "asynch": false,
-                    "callback": "function(){ return true;}"
-                }
-            ]
-        },
-		{
-			"ZP4Call":[
-				{
-                    "order": "1",
-                    "status": "pause",
-                    "asynch": false,
-                    "callback": "function(){ return true;}"
-				}	
-			
-			]	
-		},
-		{
-			"ZP4Success":[
-				{
-                    "order": "1",
-                    "status": "active",
-                    "asynch": false,
-                    "callback": "function(){ return true;}"
-				}	
-			
-			]	
-		}
-    ]
-}
-
-*/

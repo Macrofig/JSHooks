@@ -1,0 +1,81 @@
+
+/*
+
+VERSION ALPHA
+Modified a version of hooks to use a more object oriented approach... ish. 
+Added a settings object, log, msg, WhoAmI, and shortcut ojects.
+Very basic, just proof of concept.
+
+VERSION BETA
+Added reordering function.
+Cleaned up code a bit.
+Tested in CHA.
+Released as Beta candidate.
+Known issues: Callbacks are not fired in specified order.
+
+
+
+
+
+
+//I need this to happen everytime CovCalcBuild is triggered
+Hook.register(
+  'CovCalcBuild',
+  function () {
+    alert( 'Bye!' );
+    return true;
+  }
+);
+
+
+//Trigger CovCalcBuild callbacks
+Hook.call('CovCalcBuild');
+
+
+//hook object structure
+
+{
+    "hooks": [
+        {
+            "CovCalcBuild": [
+                {
+                    "order": "1",
+                    "status": "active",
+                    "asynch": false,
+                    "callback": "function(){ return true;}"
+                },
+                {
+					"code":"coverageL"
+                    "order": "1",
+                    "status": "disabled",
+                    "asynch": false,
+                    "callback": "function(){ return true;}"
+                }
+            ]
+        },
+		{
+			"ZP4Call":[
+				{
+                    "order": "1",
+                    "status": "pause",
+                    "asynch": false,
+                    "callback": "function(){ return true;}"
+				}	
+			
+			]	
+		},
+		{
+			"ZP4Success":[
+				{
+                    "order": "1",
+                    "status": "active",
+                    "asynch": false,
+                    "callback": "function(){ return true;}"
+				}	
+			
+			]	
+		}
+    ]
+}
+
+*/
