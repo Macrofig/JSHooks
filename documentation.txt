@@ -8,36 +8,44 @@ Very basic, just proof of concept.
 
 VERSION BETA
 Added reordering function.
-Cleaned up code a bit.
-Tested in CHA.
-Released as Beta candidate.
-Known issues: Callbacks are not fired in specified order.
+Cleaned up code a bit.                                        
+Released as Beta.
+Known issues: Callbacks are not fired in specified order. Yet.
+Removed msg node.
 
 
 
 
 
 
-//I need this to happen everytime CovCalcBuild is triggered
+
+
+
+//I need this to happen everytime actionA occurs
+
+alert( "YAR!" );
+
+
+//Well, first, you need to register the function.
 Hook.register(
-  'CovCalcBuild',
-  function () {
-    alert( 'Bye!' );
-    return true;
-  }
-);
+{
+	"callname" : "actionA",
+	"callback" : function () 
+		{
+		    alert( 'Bye!' );
+		}
+});
 
-
-//Trigger CovCalcBuild callbacks
-Hook.call('CovCalcBuild');
+//Now add this line of code to trigger all actions registered to the actionA callname.
+Hook.call('actionA');
 
 
 //hook object structure
-
+//THIS IS IN PROGRESS!!!!!
 {
     "hooks": [
         {
-            "CovCalcBuild": [
+            "actionA": [
                 {
                     "order": "1",
                     "status": "active",
@@ -45,7 +53,7 @@ Hook.call('CovCalcBuild');
                     "callback": "function(){ return true;}"
                 },
                 {
-					"code":"coverageL"
+					"code":"fubar"
                     "order": "1",
                     "status": "disabled",
                     "asynch": false,
@@ -54,7 +62,7 @@ Hook.call('CovCalcBuild');
             ]
         },
 		{
-			"ZP4Call":[
+			"actionB":[
 				{
                     "order": "1",
                     "status": "pause",
@@ -65,7 +73,7 @@ Hook.call('CovCalcBuild');
 			]	
 		},
 		{
-			"ZP4Success":[
+			"actionN":[
 				{
                     "order": "1",
                     "status": "active",
